@@ -96,7 +96,7 @@ def open_city_overview():
 
 def open_map():
     print("Affichage de la carte")
-    get_element(".island_view").click()
+    driver.execute_script("document.getElementsByClassName('island_view')[0].click()")
     short_pause()
 
 
@@ -237,10 +237,9 @@ def get_current_city_next_research():
 def get_current_city_units():
     return driver.execute_script('return ITowns.getCurrentTown().units()')
 
-
+# returns an int representing the length of the recruiting queue
 def get_current_city_recruiting_queue_length():
     return driver.execute_script('return ITowns.getCurrentTown().getUnitOrdersCollection().length')
-
 
 # returns two strings containing the name of the next unit to recruit (only takes those whose research ar true)
 # and the amount to recruit
@@ -546,7 +545,7 @@ def long_pause():
 
 
 def zoom_out():
-    driver.execute_script("document.body.style.zoom='90%'")
+    driver.execute_script("document.body.style.zoom='67%'")
 
 
 def setup_window():
