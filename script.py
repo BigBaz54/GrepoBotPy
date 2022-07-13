@@ -241,11 +241,15 @@ def get_current_city_units():
 def get_current_city_recruiting_queue_length():
     return driver.execute_script('return ITowns.getCurrentTown().getUnitOrdersCollection().length')
 
-# returns two strings containing the name of the next unit to recruit (only takes those whose research ar true)
+# returns two strings containing the name of the next unit to recruit (only takes those whose research is done)
 # and the amount to recruit
 def get_current_city_next_recruiting_order():
+    # only takes those whose research is done
     return
 
+# returns a list of strings containing the names of all the naval units
+def get_naval_units_list():
+    return ['big_transporter', 'bireme', 'attack_ship', 'demolition_ship', 'small_transporter', 'trireme', 'colonize_ship', 'sea_monster', 'siren']
 
 ##################################
 ########## do_functions ##########
@@ -298,7 +302,7 @@ def do_auto_build():
     print_with_time_and_color('\n--do_auto_build--', 'blue')
     # open_city_overview()
     open_main()
-    print("Lancement de l'ordre")
+    print("Lancement de la construction")
     get_element(
         building_buttons_queries[building_queues[get_current_city_name()][0]]).click()
     building_queues[get_current_city_name(
@@ -314,21 +318,21 @@ def do_auto_recruit():
     print_with_time_and_color('\n--do_auto_recruit--', 'blue')
     unit, amount = get_current_city_next_recruiting_order()
     if unit in get_naval_units_list():
-        # ouvrir port
+        open_docks()
         print("Choix de " + unit + " dans le port")
     else: 
-        # ouvrir caserne
+        open_barracks()
         print("Choix de " + unit + " dans la caserne")
-        driver.execute_script("document.querySelector('#unit_order_unit_hidden').value = " + unit)
-        short_pause()
-        print("Choix du nombre d'unités à former")
-        get_element('#unit_order_input').send_keys(Keys.BACKSPACE)
-        get_element('#unit_order_input').send_keys(Keys.BACKSPACE)
-        get_element('#unit_order_input').send_keys(Keys.BACKSPACE)
-        get_element('#unit_order_input').send_keys(Keys.BACKSPACE)
-        get_element('#unit_order_input').send_keys(amount)
-        short_pause()
-
+    driver.execute_script("document.querySelector('#unit_order_unit_hidden').value = " + unit)
+    short_pause()
+    print("Choix du nombre d'unités à former")
+    get_element('#unit_order_input').send_keys(Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE)
+    get_element('#unit_order_input').send_keys(amount)
+    short_pause()
+    print('Lancement de la formation')
+    get_element('#unit_order_confirm').click()
+    short_pause()
+    close_all_windows()
 
 
 def do_auto_festival():
@@ -384,6 +388,7 @@ def do_auto_farm_towns_all():
     last_farm_town = datetime.now().timestamp()
     short_pause()
     close_all_windows()
+
 
 def do_auto_research():
     connect()
