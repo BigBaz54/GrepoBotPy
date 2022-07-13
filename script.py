@@ -323,7 +323,7 @@ def do_auto_recruit():
     else: 
         open_barracks()
         print("Choix de " + unit + " dans la caserne")
-    driver.execute_script("document.querySelector('#unit_order_unit_hidden').value = " + unit)
+    driver.execute_script("document.querySelector('#unit_order_unit_hidden').value = " + "'"+unit+"'")
     short_pause()
     print("Choix du nombre d'unités à former")
     get_element('#unit_order_input').send_keys(Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE)
@@ -542,7 +542,7 @@ def sleep_time_randomizer(seconds, fluctuate):
 
 
 def short_pause():
-    sleep(sleep_time_randomizer(1, 1))
+    sleep(sleep_time_randomizer(2, 1))
 
 
 def long_pause():
