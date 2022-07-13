@@ -144,25 +144,19 @@ def open_barracks():
 
 def open_farm_town_overview():
     print("Affichage de l'aperçu des VP")
-    icon = get_element(".premium>.icon")
-    li = get_element(".farm_town_overview>a")
-    ActionChains(driver, 500).move_to_element(icon).click(li).perform()
+    driver.execute_script("FarmTownOverviewWindowFactory.openFarmTownOverview()")
     short_pause()
 
 
 def open_culture_overview():
     print("Affichage de l'aperçu de la Culture")
-    icon = get_element(".premium>.icon")
-    li = get_element(".culture_overview>a")
-    ActionChains(driver, 500).move_to_element(icon).click(li).perform()
+    driver.execute_script("TownOverviewWindowFactory.openCultureOverview()")
     short_pause()
 
 
 def open_attack_planer():
     print("Affichage du planificateur")
-    icon = get_element(".premium>.icon")
-    li = get_element(".attack_planer>a")
-    ActionChains(driver, 500).move_to_element(icon).click(li).perform()
+    driver.execute_script("AttackPlannerWindowFactory.openAttackPlannerWindow()")
     short_pause()
 
 
