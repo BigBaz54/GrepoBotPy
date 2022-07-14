@@ -1,9 +1,6 @@
-from fileinput import close
 from lib2to3.pgen2 import driver
 from random import random
 from time import sleep
-from webbrowser import get
-from numpy import short
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -16,16 +13,34 @@ from ast import literal_eval
 def action_selector():
     connect()
     close_daily_reward()
+    if (auto_attack_enabled):
+            # print(actions_current_town[i]['name'] + ' est activé !')
+            if (is_ready_auto_attack()):
+                # print(actions_current_town[i]['name'] + ' est prêt !')
+                do_auto_attack()
+                return
+    if (auto_farm_towns_enabled):
+            # print(actions_current_town[i]['name'] + ' est activé !')
+            if (is_ready_auto_farm_towns()):
+                # print(actions_current_town[i]['name'] + ' est prêt !')
+                do_auto_farm_towns()
+                return
     actions_current_town = actions[get_current_city_name()]
     print_with_time_and_color('\nJe sélectionne une action à effectuer dans la ville : ' +
                             get_current_city_name(), 'red')
     for i in range(len(actions_current_town.keys())):
         if (actions_current_town[i]['activated']):
             # print(actions_current_town[i]['name'] + ' est activé !')
-            if (actions_current_town[i]['is_ready_function']()):
-                # print(actions_current_town[i]['name'] + ' est prêt !')
-                actions_current_town[i]['do_function']()
-                return
+            if not (actions_current_town[i]['is_processing_function']()):
+                if (actions_current_town[i]['is_ready_function']()):
+                    # print(actions_current_town[i]['name'] + ' est prêt !')
+                    actions_current_town[i]['do_function']()
+                    return
+                else:
+                    print("La prochaine action à réaliser n'est pas disponible")
+                    switch_town()
+                    return
+    print("Cette ville est full stacked !!")
     switch_town()
     if(get_current_city_name() == '1. Ville 1'):
         print('Toutes les villes ont été parcourues')
@@ -424,7 +439,7 @@ def do_auto_research():
 
 
 #####################################
-########## is_ready_functions ##########
+######## is_ready_functions #########
 #####################################
 
 def is_ready_auto_attack():
@@ -552,6 +567,11 @@ def is_ready_auto_research():
 
 
 ######################################
+###### is_processing_functions #######
+######################################
+
+
+######################################
 ########## helper_functions ##########
 ######################################
 
@@ -638,23 +658,19 @@ auto_research_enabled = True
 # swap the digits to change the priority order
 actions = {
     '1. Ville 1': {
-        1: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build},
-        2: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research},
-        3: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit},
+        0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_processing_function': is_processing_auto_build},
+        1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_processing_function': is_processing_auto_research},
+        2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_processing_function': is_processing_auto_recruit},
     },
     '2. Ville 2': {
-        0: {'name': 'attack', 'activated': auto_attack_enabled, 'do_function': do_auto_attack, 'is_ready_function': is_ready_auto_attack},
-        1: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build},
-        2: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research},
-        3: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit},
-        4: {'name': 'farm_towns', 'activated': auto_farm_towns_enabled, 'do_function': do_auto_farm_towns, 'is_ready_function': is_ready_auto_farm_towns},
+        0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_processing_function': is_processing_auto_build},
+        1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_processing_function': is_processing_auto_research},
+        2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_processing_function': is_processing_auto_recruit},
     },
     '3. Ville 3': {
-        0: {'name': 'attack', 'activated': auto_attack_enabled, 'do_function': do_auto_attack, 'is_ready_function': is_ready_auto_attack},
-        1: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build},
-        2: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research},
-        3: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit},
-        4: {'name': 'farm_towns', 'activated': auto_farm_towns_enabled, 'do_function': do_auto_farm_towns, 'is_ready_function': is_ready_auto_farm_towns},
+        0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_processing_function': is_processing_auto_build},
+        1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_processing_function': is_processing_auto_research},
+        2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_processing_function': is_processing_auto_recruit},
     },
 }
 
@@ -663,7 +679,9 @@ actions = {
 TIME_BETWEEN_ACTIONS = 2
 TIME_TO_PREPARE_ATTACK = 180
 BATTLE_POINTS_TO_SPARE = 1000
-MAX_BUILDING_ORDERS = 2
+MAX_BUILDING_ORDERS = 3
+MAX_RESEARCHING_ORDERS = 2
+MAX_RECRUITING_ORDERS = 4
 
 USERNAME = 'me noob'
 PASSWORD = 'L0uL0u54'
