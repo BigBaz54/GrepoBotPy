@@ -75,6 +75,9 @@ def switch_town():
     print_with_time_and_color('\n\n--Passage à la ville suivante--', 'magenta')
     get_element('.btn_next_town').click()
 
+# switch to the town whose id (int) is given
+def switch_to_town_by_id(city_id):
+    driver.execute_script("TownSwitch.prototype.townSwitch(" + str(city_id) +")")
 
 
 
@@ -171,6 +174,7 @@ def close_daily_reward():
 
 
 
+
 ##################################
 ########## get_functions #########
 ##################################
@@ -247,9 +251,17 @@ def get_current_city_next_recruiting_order():
     # only takes those whose research is done
     return
 
+# returns the id (int) of the current city
+def get_current_city_id():
+    return driver.execute_script("return ITowns.getCurrentTown().id")
+
+
 # returns a list of strings containing the names of all the naval units
 def get_naval_units_list():
     return ['big_transporter', 'bireme', 'attack_ship', 'demolition_ship', 'small_transporter', 'trireme', 'colonize_ship', 'sea_monster', 'siren']
+
+
+
 
 ##################################
 ########## do_functions ##########
@@ -258,6 +270,8 @@ def get_naval_units_list():
 def do_auto_attack():
     connect()
     print_with_time_and_color('\n--do_auto_attack--', 'blue')
+    print('Sauvegarde de la ville courante')
+    city_id = get_current_city_id()
     open_attack_planer()
     print('Affichage du plan courant')
     get_element('td.ap_name>a').click()
@@ -278,12 +292,15 @@ def do_auto_attack():
         sleep(0.1)
     while int(datetime.now().strftime('%M'))!= m:
         sleep(0.1)
-    while int(datetime.now().strftime('%S'))<= s:
+    while int(datetime.now().strftime('%S'))<= (s-1):
         sleep(0.001)
     atk_btn.click()
     print_with_time_and_color('Attaque lancée !')
     short_pause()
     close_all_windows()
+    print("Retour sur la ville courante")
+    switch_to_town_by_id(city_id)
+    short_pause()
     open_attack_planer()
     print('Affichage du plan courant')
     get_element('td.ap_name>a').click()
@@ -403,6 +420,9 @@ def do_auto_research():
     short_pause()
     close_all_windows()
 
+
+
+
 #####################################
 ########## check_functions ##########
 #####################################
@@ -424,7 +444,7 @@ def check_auto_attack():
         short_pause()
         row = get_element('ul.attacks_list>li>.row3').get_attribute('innerText')
         t = row[-8:]
-        texte_jour = row[9:14]
+        texte_jour = row[9:15]
         h = int(t[:2])
         m = int(t[3:5])
         s = int(t[6:8])
