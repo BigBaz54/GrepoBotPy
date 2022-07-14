@@ -22,7 +22,7 @@ def action_selector():
     for i in range(len(actions_current_town.keys())):
         if (actions_current_town[i]['activated']):
             # print(actions_current_town[i]['name'] + ' est activé !')
-            if (actions_current_town[i]['check_function']()):
+            if (actions_current_town[i]['is_ready_function']()):
                 # print(actions_current_town[i]['name'] + ' est prêt !')
                 actions_current_town[i]['do_function']()
                 return
@@ -424,13 +424,13 @@ def do_auto_research():
 
 
 #####################################
-########## check_functions ##########
+########## is_ready_functions ##########
 #####################################
 
-def check_auto_attack():
+def is_ready_auto_attack():
     connect()
     ready = False
-    print_with_time_and_color('\n--check_auto_attack--', 'cyan')
+    print_with_time_and_color('\n--is_ready_auto_attack--', 'cyan')
     open_attack_planer()
     nb_atk= int(get_element('.attacks').get_attribute('innerText'))
     if nb_atk == 0:
@@ -457,10 +457,10 @@ def check_auto_attack():
     return ready
 
 
-def check_auto_build():
+def is_ready_auto_build():
     connect()
     ready = False
-    print_with_time_and_color('\n--check_auto_build--', 'cyan')
+    print_with_time_and_color('\n--is_ready_auto_build--', 'cyan')
     if (get_current_city_building_queue_length() >= MAX_BUILDING_ORDERS):
         print("Nombre d'ordres max. atteint")
         return False
@@ -485,27 +485,27 @@ def check_auto_build():
     return ready
 
 
-def check_auto_recruit():
+def is_ready_auto_recruit():
     connect()
-    print_with_time_and_color('\n--check_auto_recruit--', 'cyan')
+    print_with_time_and_color('\n--is_ready_auto_recruit--', 'cyan')
 
 
-def check_auto_festival():
+def is_ready_auto_festival():
     connect()
-    print_with_time_and_color('\n--check_auto_festival--', 'cyan')
+    print_with_time_and_color('\n--is_ready_auto_festival--', 'cyan')
     return True
 
 
-def check_auto_triumph():
+def is_ready_auto_triumph():
     connect()
-    print_with_time_and_color('\n--check_auto_triumph--', 'cyan')
+    print_with_time_and_color('\n--is_ready_auto_triumph--', 'cyan')
     return True
 
 
-def check_auto_farm_towns():
+def is_ready_auto_farm_towns():
     connect()
     ready = False
-    print_with_time_and_color('\n--check_auto_farm_towns--', 'cyan')
+    print_with_time_and_color('\n--is_ready_auto_farm_towns--', 'cyan')
     storage = get_current_city_storage()
     ressources = get_current_city_resources()
     if ((ressources['wood']==storage) and (ressources['stone']==storage) and (ressources['iron']==storage)):
@@ -520,10 +520,10 @@ def check_auto_farm_towns():
     return ready
 
 
-def check_auto_farm_towns_all():
+def is_ready_auto_farm_towns_all():
     connect()
     ready = False
-    print_with_time_and_color('\n--check_auto_farm_towns_all--', 'cyan')
+    print_with_time_and_color('\n--is_ready_auto_farm_towns_all--', 'cyan')
     if (datetime.now().timestamp() - last_farm_town < 4*60):
         return False
     open_farm_town_overview()
@@ -535,10 +535,10 @@ def check_auto_farm_towns_all():
     return ready
 
 
-def check_auto_research():
+def is_ready_auto_research():
     connect()
     ready = False
-    print_with_time_and_color('\n--check_auto_research--', 'cyan')
+    print_with_time_and_color('\n--is_ready_auto_research--', 'cyan')
     open_academy()
     if get_current_city_next_research()!=None:
         print('La recherche ' + get_current_city_next_research() + ' est prête')
@@ -638,25 +638,23 @@ auto_research_enabled = True
 # swap the digits to change the priority order
 actions = {
     '1. Ville 1': {
-        0: {'name': 'attack', 'activated': auto_attack_enabled, 'do_function': do_auto_attack, 'check_function': check_auto_attack},
-        1: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'check_function': check_auto_build},
-        2: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'check_function': check_auto_research},
-        3: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'check_function': check_auto_recruit},
-        4: {'name': 'farm_towns', 'activated': auto_farm_towns_enabled, 'do_function': do_auto_farm_towns, 'check_function': check_auto_farm_towns},
+        1: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build},
+        2: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research},
+        3: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit},
     },
     '2. Ville 2': {
-        0: {'name': 'attack', 'activated': auto_attack_enabled, 'do_function': do_auto_attack, 'check_function': check_auto_attack},
-        1: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'check_function': check_auto_build},
-        2: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'check_function': check_auto_research},
-        3: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'check_function': check_auto_recruit},
-        4: {'name': 'farm_towns', 'activated': auto_farm_towns_enabled, 'do_function': do_auto_farm_towns, 'check_function': check_auto_farm_towns},
+        0: {'name': 'attack', 'activated': auto_attack_enabled, 'do_function': do_auto_attack, 'is_ready_function': is_ready_auto_attack},
+        1: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build},
+        2: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research},
+        3: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit},
+        4: {'name': 'farm_towns', 'activated': auto_farm_towns_enabled, 'do_function': do_auto_farm_towns, 'is_ready_function': is_ready_auto_farm_towns},
     },
     '3. Ville 3': {
-        0: {'name': 'attack', 'activated': auto_attack_enabled, 'do_function': do_auto_attack, 'check_function': check_auto_attack},
-        1: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'check_function': check_auto_build},
-        2: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'check_function': check_auto_research},
-        3: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'check_function': check_auto_recruit},
-        4: {'name': 'farm_towns', 'activated': auto_farm_towns_enabled, 'do_function': do_auto_farm_towns, 'check_function': check_auto_farm_towns},
+        0: {'name': 'attack', 'activated': auto_attack_enabled, 'do_function': do_auto_attack, 'is_ready_function': is_ready_auto_attack},
+        1: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build},
+        2: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research},
+        3: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit},
+        4: {'name': 'farm_towns', 'activated': auto_farm_towns_enabled, 'do_function': do_auto_farm_towns, 'is_ready_function': is_ready_auto_farm_towns},
     },
 }
 
