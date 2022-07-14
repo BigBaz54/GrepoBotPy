@@ -31,7 +31,7 @@ def action_selector():
     for i in range(len(actions_current_town.keys())):
         if (actions_current_town[i]['activated']):
             # print(actions_current_town[i]['name'] + ' est activé !')
-            if not (actions_current_town[i]['is_processing_function']()):
+            if not (actions_current_town[i]['is_stacked_function']()):
                 if (actions_current_town[i]['is_ready_function']()):
                     # print(actions_current_town[i]['name'] + ' est prêt !')
                     actions_current_town[i]['do_function']()
@@ -240,6 +240,14 @@ def get_current_city_land_units():
 def get_current_city_researches():
     return driver.execute_script('return ITowns.getCurrentTown().getResearches().attributes')
 
+# returns a list of strings representing the names of the researches unlocked at the current academy lvl
+def get_current_city_unlocked_researches():
+    return driver.execute_script("")
+
+
+def get_current_city_researching_queue_length():
+    return driver.execute_script("")
+
 # returns a list of strings representing the names of the available researches
 def get_current_city_available_researches():
     return driver.execute_script("res = [];document.querySelectorAll('.column.active>.research_box>.btn_upgrade').forEach((e) => {res.push(e.dataset['research_id'])}); return res")
@@ -256,7 +264,7 @@ def get_current_city_next_research():
 def get_current_city_units():
     return driver.execute_script('return ITowns.getCurrentTown().units()')
 
-# returns an int representing the length of the recruiting queue
+# returns an int representing the length of the recruiting queue (barracks + docks)
 def get_current_city_recruiting_queue_length():
     return driver.execute_script('return ITowns.getCurrentTown().getUnitOrdersCollection().length')
 
@@ -496,13 +504,17 @@ def is_ready_auto_build():
             print("La construction de " + first_in_queue + " n'est pas prête !")
         close_all_windows()
     else:
-        print('Aucune ordre dans la file de construction !')
+        print('Aucun ordre dans la file de construction !')
     return ready
 
 
 def is_ready_auto_recruit():
     connect()
+    ready = False
     print_with_time_and_color('\n--is_ready_auto_recruit--', 'cyan')
+    if (get_current_city_pop() <= 75):
+        print('Population libre insuffisante')
+        return False
 
 
 def is_ready_auto_festival():
@@ -567,8 +579,35 @@ def is_ready_auto_research():
 
 
 ######################################
-###### is_processing_functions #######
+######## is_stacked_functions ########
 ######################################
+
+def is_stacked_auto_build():
+    if (get_current_city_building_queue_length() >= MAX_BUILDING_ORDERS):
+        print('La file de construction est pleine')
+        return True
+    if (building_queues[get_current_city_name()] == []):
+        print('Aucun ordre dans la file de construction')
+        return True
+    return False
+
+
+def is_stacked_auto_research():
+    if (get_current_city_researching_queue_length() >= MAX_RESEARCHING_ORDERS):
+        print('La file de recherche est pleine')
+        return True
+    needed_unlocked_researches = [e for e in get_current_city_unlocked_researches() if e in researches_to_get[get_current_city_name()]]
+    if (needed_unlocked_researches == []):
+        print('Toutes les recherches nécessaires ont été faites')
+        return True
+    return False
+
+
+def is_stacked_auto_recruit():
+    # get_current_city_recruiting_queue_length()
+    return
+
+
 
 
 ######################################
@@ -577,7 +616,7 @@ def is_ready_auto_research():
 
 def sleep_time_randomizer(seconds, fluctuate):
     t = seconds+random()*fluctuate
-    # print('sleep time' + str(t))
+    # print('sleep time : ' + str(t))
     return t
 
 
@@ -658,19 +697,19 @@ auto_research_enabled = True
 # swap the digits to change the priority order
 actions = {
     '1. Ville 1': {
-        0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_processing_function': is_processing_auto_build},
-        1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_processing_function': is_processing_auto_research},
-        2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_processing_function': is_processing_auto_recruit},
+        0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_stacked_function': is_stacked_auto_build},
+        1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_stacked_function': is_stacked_auto_research},
+        2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_stacked_function': is_stacked_auto_recruit},
     },
     '2. Ville 2': {
-        0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_processing_function': is_processing_auto_build},
-        1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_processing_function': is_processing_auto_research},
-        2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_processing_function': is_processing_auto_recruit},
+        0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_stacked_function': is_stacked_auto_build},
+        1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_stacked_function': is_stacked_auto_research},
+        2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_stacked_function': is_stacked_auto_recruit},
     },
     '3. Ville 3': {
-        0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_processing_function': is_processing_auto_build},
-        1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_processing_function': is_processing_auto_research},
-        2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_processing_function': is_processing_auto_recruit},
+        0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_stacked_function': is_stacked_auto_build},
+        1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_stacked_function': is_stacked_auto_research},
+        2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_stacked_function': is_stacked_auto_recruit},
     },
 }
 
