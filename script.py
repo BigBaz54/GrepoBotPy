@@ -1,7 +1,6 @@
 from lib2to3.pgen2 import driver
 from math import floor
 from random import random
-from sys import set_coroutine_origin_tracking_depth
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -215,6 +214,7 @@ def get_current_city_stone():
 
 def get_current_city_iron():
     return get_current_city_resources()['iron']
+
 
 def get_current_city_favor():
     return driver.execute_script('return ITowns.getCurrentTown().resources().favor')
@@ -576,7 +576,7 @@ def is_ready_auto_recruit():
     connect()
     ready = False
     print_with_time_and_color('\n--is_ready_auto_recruit--', 'cyan')
-    if (get_current_city_pop() <= 75):
+    if (get_current_city_pop() <= MIN_POP_TO_RECRUIT):
         print('Population libre insuffisante')
         return False
 
@@ -647,6 +647,8 @@ def is_ready_auto_research():
 ######################################
 
 def is_stacked_auto_build():
+    connect()
+    print_with_time_and_color('\n--is_stacked_auto_build--', 'green')
     if (get_current_city_building_queue_length() >= MAX_BUILDING_ORDERS):
         print('La file de construction est pleine')
         return True
@@ -657,6 +659,8 @@ def is_stacked_auto_build():
 
 
 def is_stacked_auto_research():
+    connect()
+    print_with_time_and_color('\n--is_stacked_auto_research--', 'green')
     if (get_current_city_researching_queue_length() >= MAX_RESEARCHING_ORDERS):
         print('La file de recherche est pleine')
         return True
@@ -668,8 +672,15 @@ def is_stacked_auto_research():
 
 
 def is_stacked_auto_recruit():
-    # get_current_city_recruiting_queue_length()
-    return
+    connect()
+    print_with_time_and_color('\n--is_stacked_auto_recruit--', 'green')
+    if (get_current_city_recruiting_queue_length() >= MAX_RECRUITING_ORDERS):
+        print('La file de formation est pleine')
+        return True
+    if (get_current_city_pop <= MIN_POP_TO_RECRUIT):
+        print("Pas assez de population libre")
+        return True
+    return False
 
 
 
@@ -740,11 +751,14 @@ researches_to_get = literal_eval(open('setup_to_edit/researches_to_get.txt', 'r'
 building_buttons_queries = literal_eval(open('data/building_buttons_queries.txt', 'r').read())
 building_check_queries = literal_eval(open('data/building_check_queries.txt', 'r').read())
 
+
 # units
 units = literal_eval(open('data/units.txt', 'r').read())
 
+
 # goal_armies
 goal_armies = literal_eval(open('setup_to_edit/goal_armies.txt', 'r').read())
+
 
 # building queues
 building_queues = literal_eval(open('setup_to_edit/building_queues.txt', 'r').read())
@@ -790,6 +804,7 @@ BATTLE_POINTS_TO_SPARE = 1000
 MAX_BUILDING_ORDERS = 3
 MAX_RESEARCHING_ORDERS = 2
 MAX_RECRUITING_ORDERS = 4
+MIN_POP_TO_RECRUIT = 70
 
 USERNAME = 'me noob'
 PASSWORD = 'L0uL0u54'
