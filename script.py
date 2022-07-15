@@ -282,8 +282,10 @@ def get_current_city_id():
 def get_naval_units_list():
     return ['big_transporter', 'bireme', 'attack_ship', 'demolition_ship', 'small_transporter', 'trireme', 'colonize_ship', 'sea_monster', 'siren']
 
-# returns two strings containing the name of the next unit to recruit (only takes those whose research is done)
-# and the amount to recruit
+# returns a list of dict containing the series of orders possible to send in the city
+# that uses the most free pop and according to the city goal army :
+# [{'unit': <name>, 'amount': <amount>}, {'unit': <name>, 'amount': <amount>}, ... ]
+# (only takes units whose research is done)
 def get_current_city_next_recruiting_order():
     # only takes those whose research is done
     goal_army = goal_armies[get_current_city_name()]
