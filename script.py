@@ -290,10 +290,12 @@ def get_current_city_id():
 def get_naval_units_list():
     return ['big_transporter', 'bireme', 'attack_ship', 'demolition_ship', 'small_transporter', 'trireme', 'colonize_ship', 'sea_monster', 'siren']
 
-# returns a list of dict containing the series of orders possible to send in the city
+# returns a tuple containing :
+# - a list of dict containing the series of orders possible to send in the city
 # that uses the most free pop and according to the city goal army :
 # [{'unit': <name>, 'amount': <amount>}, {'unit': <name>, 'amount': <amount>}, ... ]
 # (only takes units whose research is done)
+# - the pop used by these orders
 def get_current_city_next_recruiting_order():
     # only takes those whose research is done
     goal_army = goal_armies[get_current_city_name()]
@@ -345,7 +347,7 @@ def get_current_city_next_recruiting_order():
                     for j in range(i,n):
                         tested_comp[j]=left_needed_army_researched[j]['amount']
     next_order = [{'unit': goal_army_researched[i]['unit'], 'amount': best_tested_comp[i]} for i in range(n) if best_tested_comp[i]!=0]
-    return next_order
+    return next_order, best_pop_cost
 
 
 
@@ -420,23 +422,24 @@ def do_auto_build():
 def do_auto_recruit():
     connect()
     print_with_time_and_color('\n--do_auto_recruit--', 'blue')
-    unit, amount = get_current_city_next_recruiting_order()
-    if unit in get_naval_units_list():
-        open_docks()
-        print("Choix de " + unit + " dans le port")
-    else: 
-        open_barracks()
-        print("Choix de " + unit + " dans la caserne")
-    driver.execute_script("document.querySelector('#unit_order_unit_hidden').value = " + "'"+unit+"'")
-    short_pause()
-    print("Choix du nombre d'unités à former")
-    get_element('#unit_order_input').send_keys(Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE)
-    get_element('#unit_order_input').send_keys(amount)
-    short_pause()
-    print('Lancement de la formation')
-    get_element('#unit_order_confirm').click()
-    short_pause()
-    close_all_windows()
+    for e in get_current_city_next_recruiting_order():
+        unit, amount = e['unit'], e['amount']
+        if unit in get_naval_units_list():
+            open_docks()
+            print("Choix de " + unit + " dans le port")
+        else: 
+            open_barracks()
+            print("Choix de " + unit + " dans la caserne")
+        driver.execute_script("document.querySelector('#unit_order_unit_hidden').value = " + "'"+unit+"'")
+        short_pause()
+        print("Choix du nombre d'unités à former")
+        get_element('#unit_order_input').send_keys(Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE, Keys.BACKSPACE)
+        get_element('#unit_order_input').send_keys(amount)
+        short_pause()
+        print('Lancement de la formation')
+        get_element('#unit_order_confirm').click()
+        short_pause()
+        close_all_windows()
 
 
 def do_auto_festival():
@@ -557,8 +560,7 @@ def is_ready_auto_build():
         print('File de ' + get_current_city_name() + ' : ' +
             str(building_queues[get_current_city_name()]))
         first_in_queue = building_queues[get_current_city_name()][0]
-        print(
-            'Vérication de la possibilité de la construction de '+first_in_queue)
+        print('Vérication de la possibilité de la construction de ' + first_in_queue)
         el_to_check = get_element(
             building_check_queries[first_in_queue])
         if ('Impossible' not in el_to_check.get_attribute('innerText')):
@@ -574,11 +576,14 @@ def is_ready_auto_build():
 
 def is_ready_auto_recruit():
     connect()
-    ready = False
     print_with_time_and_color('\n--is_ready_auto_recruit--', 'cyan')
     if (get_current_city_pop() <= MIN_POP_TO_RECRUIT):
         print('Population libre insuffisante')
         return False
+    next_order, next_order_pop = get_current_city_next_recruiting_order()
+    if (next_order_pop >= MIN_POP_TO_RECRUIT):
+        return True
+    return False
 
 
 def is_ready_auto_festival():
@@ -678,7 +683,7 @@ def is_stacked_auto_recruit():
         print('La file de formation est pleine')
         return True
     if (get_current_city_pop <= MIN_POP_TO_RECRUIT):
-        print("Pas assez de population libre")
+        print("Population libre insuffisante")
         return True
     return False
 
@@ -803,7 +808,7 @@ TIME_TO_PREPARE_ATTACK = 180
 BATTLE_POINTS_TO_SPARE = 1000
 MAX_BUILDING_ORDERS = 3
 MAX_RESEARCHING_ORDERS = 2
-MAX_RECRUITING_ORDERS = 4
+MAX_RECRUITING_ORDERS = 6
 MIN_POP_TO_RECRUIT = 70
 
 USERNAME = 'me noob'
