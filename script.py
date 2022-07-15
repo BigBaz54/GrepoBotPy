@@ -38,8 +38,13 @@ def action_selector():
                     actions_current_town[i]['do_function']()
                     return
                 else:
-                    print("La prochaine action à réaliser n'est pas disponible")
+                    print(actions_current_town[i]['name']+" n'est pas stacked")
                     switch_town()
+                    if(get_current_city_name() == '1. Ville 1'):
+                        print('Toutes les villes ont été parcourues')
+                        do_auto_festival()
+                        do_auto_triumph()
+                        sleep(sleep_time_randomizer(60, 10))
                     return
     print("Cette ville est full stacked !!")
     switch_town()
@@ -660,6 +665,7 @@ def is_stacked_auto_build():
     if (building_queues[get_current_city_name()] == []):
         print('Aucun ordre dans la file de construction')
         return True
+    print("Pas stacked")
     return False
 
 
@@ -673,6 +679,7 @@ def is_stacked_auto_research():
     if (needed_unlocked_researches == []):
         print("Toutes les recherches disponibles à ce niveau d'académie ont été faites")
         return True
+    print("Pas stacked")
     return False
 
 
@@ -685,6 +692,7 @@ def is_stacked_auto_recruit():
     if (get_current_city_pop <= MIN_POP_TO_RECRUIT):
         print("Population libre insuffisante")
         return True
+    print("Pas stacked")
     return False
 
 
