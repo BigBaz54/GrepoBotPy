@@ -197,8 +197,7 @@ def close_daily_reward():
 ##################################
 
 def get_current_city_building_queue_length():
-    length = driver.execute_script(
-        'return window.ITowns.getCurrentTown().buildingOrders().length')
+    length = driver.execute_script('return ITowns.getCurrentTown().buildingOrders().length')
     return length
 
 
@@ -241,21 +240,30 @@ def get_current_city_land_units():
     return driver.execute_script('return ITowns.getCurrentTown().getLandUnits()')
 
 # return a dictionary with the name of all the researches as keys and True or False as the values
-# be careful : the dict contains 'id': <a number> and 'ram': False
+# be careful : the dict contains 'id': <a number>
 def get_current_city_researches():
     return driver.execute_script('return ITowns.getCurrentTown().getResearches().attributes')
 
 # returns a list of strings representing the names of the researches unlocked at the current academy lvl
 def get_current_city_unlocked_researches():
-    return driver.execute_script("")
+    open_academy()
+    res = driver.execute_script("res = [];document.querySelectorAll('.column.active>.research_box>.research_icon').forEach((e) => {res.push(e.className.split(' ')[2])}); return res")
+    close_all_windows()
+    return res
 
 
 def get_current_city_researching_queue_length():
-    return driver.execute_script("")
+    open_academy()
+    l = driver.execute_script("document.querySelectorAll('.queued_building_order').length")
+    close_all_windows()
+    return l
 
 # returns a list of strings representing the names of the available researches
 def get_current_city_available_researches():
-    return driver.execute_script("res = [];document.querySelectorAll('.column.active>.research_box>.btn_upgrade').forEach((e) => {res.push(e.dataset['research_id'])}); return res")
+    open_academy()
+    res = driver.execute_script("res = [];document.querySelectorAll('.column.active>.research_box>.btn_upgrade').forEach((e) => {res.push(e.dataset['research_id'])}); return res")
+    close_all_windows()
+    return res
 
 # returns a string of the name of the next research to do, or None if no needed research is available
 def get_current_city_next_research():
@@ -338,6 +346,8 @@ def get_current_city_next_recruiting_order():
                         tested_comp[j]=left_needed_army_researched[j]['amount']
     next_order = [{'unit': goal_army_researched[i]['unit'], 'amount': best_tested_comp[i]} for i in range(n) if best_tested_comp[i]!=0]
     return next_order
+
+
 
 
 ##################################
