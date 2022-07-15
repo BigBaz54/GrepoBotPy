@@ -1,5 +1,5 @@
 {
-    "1. Ville 1" : [{'unit': 'slinger', 'amount': 399}, {'unit': 'rider', 'amount': 150}, {'unit': 'hoplite', 'amount': 819}, {'unit': 'catapult', 'amount': 39}, {'unit': 'attack_ship', 'amount': 16}, {'unit': 'small_transporter', 'amount': 141}, {'unit': 'colonize_ship', 'amount': 1}],
+    "1. Ville 1" : [],
     "2. Ville 2" : [],
     "3. Ville 3" : [],
 }

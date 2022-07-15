@@ -1,5 +1,5 @@
 {
-    '1. Ville 1' : ['colonize_ship', 'town_gard', 'booty', 'pottery'],
+    '1. Ville 1' : ['colonize_ship', 'town_gard', 'booty', 'pottery', 'architecture', 'building_crane'],
     '2. Ville 2' : [],
     '3. Ville 3' : [],
 }
