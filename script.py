@@ -292,7 +292,9 @@ def get_current_city_next_recruiting_order():
     goal_army_researched = [e for e in goal_army if (get_current_city_researches()[e['unit']])]
     n = len(goal_army_researched)
     rounding_scopes = []
-    for e in goal_army_researched:
+    current_army = get_current_city_units()
+    left_needed_army_researched = [{'unit': goal_army_researched[i]['unit'], 'amount': goal_army_researched[i]['amount']-(current_army[goal_army_researched[i]['unit']] if (goal_army_researched[i]['unit'] in list(current_army)) else 0 )} for i in range(n)]
+    for e in left_needed_army_researched:
         rounding_scope = floor((e['amount']/30))+1
         e['amount']=e['amount']-e['amount']%rounding_scope
         rounding_scopes.append(rounding_scope)
@@ -303,10 +305,10 @@ def get_current_city_next_recruiting_order():
     favor = get_current_city_favor()
     tested_comp = [0]*n
     best_pop_cost = 0
-    while(tested_comp != [e['amount'] for e in goal_army_researched]):
+    while(tested_comp != [e['amount'] for e in left_needed_army_researched]):
         tested_comp[-1]+=rounding_scopes[-1]
         for i in range(n-1, -1, -1):
-            if tested_comp[i] > goal_army_researched[i]['amount']:
+            if tested_comp[i] > left_needed_army_researched[i]['amount']:
                 tested_comp[i]=0
                 tested_comp[i-1]+=rounding_scopes[i-1]
         # traitement
@@ -333,7 +335,7 @@ def get_current_city_next_recruiting_order():
             for i in range(1, n+1):
                 if tested_comp[i:] == [0]*(n-i):
                     for j in range(i,n):
-                        tested_comp[j]=goal_army_researched[j]['amount']
+                        tested_comp[j]=left_needed_army_researched[j]['amount']
     next_order = [{'unit': goal_army_researched[i]['unit'], 'amount': best_tested_comp[i]} for i in range(n) if best_tested_comp[i]!=0]
     return next_order
 
