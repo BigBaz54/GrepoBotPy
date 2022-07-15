@@ -217,6 +217,9 @@ def get_current_city_stone():
 def get_current_city_iron():
     return get_current_city_resources()['iron']
 
+def get_current_city_favor():
+    return driver.execute_script('return ITowns.getCurrentTown().resources().favor')
+
 
 def get_current_city_name():
     return get_element(".town_name").get_attribute('innerText')
@@ -724,6 +727,9 @@ building_check_queries = literal_eval(open('data/building_check_queries.txt', 'r
 
 # units
 units = literal_eval(open('data/units.txt', 'r').read())
+
+# goal_armies
+goal_armies = literal_eval(open('setup_to_edit/goal_armies.txt', 'r').read())
 
 # building queues
 building_queues = literal_eval(open('setup_to_edit/building_queues.txt', 'r').read())
