@@ -332,7 +332,8 @@ def get_current_city_next_recruiting_order():
                 if tested_comp[i:] == [0]*(n-i):
                     for j in range(i,n):
                         tested_comp[j]=goal_army_researched[j]['amount']
-    return best_tested_comp
+    next_order = [{'unit': goal_army_researched[i]['unit'], 'amount': best_tested_comp[i]} for i in range(n) if best_tested_comp[i]!=0]
+    return next_order
 
 
 ##################################
