@@ -662,7 +662,7 @@ def is_stacked_auto_research():
         return True
     needed_unlocked_researches = [e for e in get_current_city_unlocked_researches() if e in researches_to_get[get_current_city_name()]]
     if (needed_unlocked_researches == []):
-        print('Toutes les recherches nécessaires ont été faites')
+        print("Toutes les recherches disponibles à ce niveau d'académie ont été faites")
         return True
     return False
 
