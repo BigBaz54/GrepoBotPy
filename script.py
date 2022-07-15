@@ -1,5 +1,7 @@
 from lib2to3.pgen2 import driver
+from math import floor
 from random import random
+from sys import set_coroutine_origin_tracking_depth
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -236,7 +238,7 @@ def get_current_city_land_units():
     return driver.execute_script('return ITowns.getCurrentTown().getLandUnits()')
 
 # return a dictionary with the name of all the researches as keys and True or False as the values
-# be careful : the dict contains 'id': <a number>
+# be careful : the dict contains 'id': <a number> and 'ram': False
 def get_current_city_researches():
     return driver.execute_script('return ITowns.getCurrentTown().getResearches().attributes')
 
@@ -268,12 +270,6 @@ def get_current_city_units():
 def get_current_city_recruiting_queue_length():
     return driver.execute_script('return ITowns.getCurrentTown().getUnitOrdersCollection().length')
 
-# returns two strings containing the name of the next unit to recruit (only takes those whose research is done)
-# and the amount to recruit
-def get_current_city_next_recruiting_order():
-    # only takes those whose research is done
-    return
-
 # returns the id (int) of the current city
 def get_current_city_id():
     return driver.execute_script("return ITowns.getCurrentTown().id")
@@ -283,7 +279,57 @@ def get_current_city_id():
 def get_naval_units_list():
     return ['big_transporter', 'bireme', 'attack_ship', 'demolition_ship', 'small_transporter', 'trireme', 'colonize_ship', 'sea_monster', 'siren']
 
-
+# returns two strings containing the name of the next unit to recruit (only takes those whose research is done)
+# and the amount to recruit
+def get_current_city_next_recruiting_order():
+    # only takes those whose research is done
+    goal_army = goal_armies[get_current_city_name()]
+    goal_army_researched = [e for e in goal_army if (get_current_city_researches()[e['unit']])]
+    n = len(goal_army_researched)
+    rounding_scopes = []
+    for e in goal_army_researched:
+        rounding_scope = floor((e['amount']/30))+1
+        e['amount']=e['amount']-e['amount']%rounding_scope
+        rounding_scopes.append(rounding_scope)
+    wood = get_current_city_wood()
+    stone = get_current_city_stone()
+    iron = get_current_city_iron()
+    pop = get_current_city_pop()
+    favor = get_current_city_favor()
+    tested_comp = [0]*n
+    best_pop_cost = 0
+    while(tested_comp != [e['amount'] for e in goal_army_researched]):
+        tested_comp[-1]+=rounding_scopes[-1]
+        for i in range(n-1, -1, -1):
+            if tested_comp[i] > goal_army_researched[i]['amount']:
+                tested_comp[i]=0
+                tested_comp[i-1]+=rounding_scopes[i-1]
+        # traitement
+        wood_cost = 0
+        stone_cost = 0
+        iron_cost = 0
+        pop_cost = 0
+        favor_cost = 0
+        for i in range(n):
+            wood_cost += units[goal_army_researched[i]['unit']]['resources']['wood']*tested_comp[i]
+            stone_cost += units[goal_army_researched[i]['unit']]['resources']['stone']*tested_comp[i]
+            iron_cost += units[goal_army_researched[i]['unit']]['resources']['iron']*tested_comp[i]
+            pop_cost += units[goal_army_researched[i]['unit']]['population']*tested_comp[i]
+            favor_cost += units[goal_army_researched[i]['unit']]['favor']*tested_comp[i]
+        
+        if (wood_cost<=wood) and (stone_cost<=stone) and (iron_cost<=iron) and (pop_cost<=pop) and (favor_cost<=favor):
+            # print(tested_comp)
+            # print("w", wood_cost, "s", stone_cost, "i", iron_cost, "p", pop_cost, "f", favor_cost, "\n")
+            if (pop_cost>best_pop_cost):
+                best_pop_cost = pop_cost
+                best_tested_comp = list.copy(tested_comp)
+                # print(best_tested_comp)
+        else: 
+            for i in range(1, n+1):
+                if tested_comp[i:] == [0]*(n-i):
+                    for j in range(i,n):
+                        tested_comp[j]=goal_army_researched[j]['amount']
+    return best_tested_comp
 
 
 ##################################
@@ -676,6 +722,8 @@ researches_to_get = literal_eval(open('setup_to_edit/researches_to_get.txt', 'r'
 building_buttons_queries = literal_eval(open('data/building_buttons_queries.txt', 'r').read())
 building_check_queries = literal_eval(open('data/building_check_queries.txt', 'r').read())
 
+# units
+units = literal_eval(open('data/units.txt', 'r').read())
 
 # building queues
 building_queues = literal_eval(open('setup_to_edit/building_queues.txt', 'r').read())
