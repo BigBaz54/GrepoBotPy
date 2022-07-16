@@ -250,6 +250,20 @@ def get_current_city_trade_capacity():
 def get_current_city_land_units():
     return driver.execute_script('return ITowns.getCurrentTown().getLandUnits()')
 
+# returns of list of strings containing the names of the researches not done and not being done
+def get_current_city_not_researched():
+    open_academy()
+    res = driver.execute_script("res = [];document.querySelectorAll('.column.active>.research_box>.research_icon').forEach((e) => {if (e.className.split(' ').includes('inactive')) {res.push(e.className.split(' ')[2])}}); return res")
+    close_front_window()
+    return res
+
+# returns of list of strings containing the names of the researches done or being done
+def get_current_city_researched_or_researching():
+    open_academy()
+    res = driver.execute_script("res = [];document.querySelectorAll('.column.active>.research_box>.research_icon').forEach((e) => {if (!e.className.split(' ').includes('inactive')) {res.push(e.className.split(' ')[2])}}); return res")
+    close_front_window()
+    return res
+
 # return a dictionary with the name of all the researches as keys and True or False as the values
 # be careful : the dict contains 'id': <a number>
 def get_current_city_researches():
@@ -667,9 +681,11 @@ def is_stacked_auto_build():
     connect()
     print_with_time_and_color('\n--is_stacked_auto_build--', 'green')
     if (get_current_city_building_queue_length() >= MAX_BUILDING_ORDERS):
+        print('Stacked !')
         print('La file de construction est pleine')
         return True
     if (building_queues[get_current_city_name()] == []):
+        print('Stacked !')
         print('Aucun ordre dans la file de construction')
         return True
     print("Pas stacked")
@@ -680,10 +696,13 @@ def is_stacked_auto_research():
     connect()
     print_with_time_and_color('\n--is_stacked_auto_research--', 'green')
     if (get_current_city_researching_queue_length() >= MAX_RESEARCHING_ORDERS):
+        print('Stacked !')
         print('La file de recherche est pleine')
         return True
-    needed_unlocked_researches = [e for e in get_current_city_unlocked_researches() if e in researches_to_get[get_current_city_name()]]
+    done = get_current_city_researched_or_researching()
+    needed_unlocked_researches = [e for e in get_current_city_unlocked_researches() if (e in researches_to_get[get_current_city_name()] and e not in done) or (e[:-4] in researches_to_get[get_current_city_name()] and e not in done)]
     if (needed_unlocked_researches == []):
+        print('Stacked !')
         print("Toutes les recherches disponibles à ce niveau d'académie ont été faites")
         return True
     print("Pas stacked")
@@ -694,9 +713,11 @@ def is_stacked_auto_recruit():
     connect()
     print_with_time_and_color('\n--is_stacked_auto_recruit--', 'green')
     if (get_current_city_recruiting_queue_length() >= MAX_RECRUITING_ORDERS):
+        print('Stacked !')
         print('La file de formation est pleine')
         return True
     if (get_current_city_pop <= MIN_POP_TO_RECRUIT):
+        print('Stacked !')
         print("Population libre insuffisante")
         return True
     print("Pas stacked")
