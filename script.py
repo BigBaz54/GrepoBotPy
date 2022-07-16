@@ -15,6 +15,7 @@ from ast import literal_eval
 def action_selector():
     connect()
     close_daily_reward()
+    print_with_time_and_color("------action_selector------", "red")
     if (auto_attack_enabled):
             # print(actions_current_town[i]['name'] + ' est activé !')
             if (is_ready_auto_attack()):
@@ -47,7 +48,7 @@ def action_selector():
                         do_auto_triumph()
                         sleep(sleep_time_randomizer(60, 10))
                     return
-    print("Cette ville est full stacked !!")
+    print_with_time_and_color("\nCette ville est full stacked !!", 'red')
     switch_town()
     if(get_current_city_name() == '1. Ville 1'):
         print('Toutes les villes ont été parcourues')
