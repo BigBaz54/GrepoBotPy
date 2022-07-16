@@ -1,5 +1,6 @@
 from lib2to3.pgen2 import driver
 from math import floor
+from operator import le
 from random import random
 from time import sleep
 from selenium import webdriver
@@ -315,6 +316,21 @@ def get_current_city_id():
 def get_naval_units_list():
     return ['big_transporter', 'bireme', 'attack_ship', 'demolition_ship', 'small_transporter', 'trireme', 'colonize_ship', 'sea_monster', 'siren']
 
+
+def get_current_city_goal_army_researched():
+    goal_army = goal_armies[get_current_city_name()]
+    goal_army_researched = [e for e in goal_army if (get_current_city_researches()[e['unit']])]
+    return goal_army_researched
+
+
+def get_current_city_left_needed_army_researched():
+    goal_army_researched = get_current_city_goal_army_researched()
+    n = len(goal_army_researched)
+    current_army = get_current_city_units()
+    left_needed_army_researched = [{'unit': goal_army_researched[i]['unit'], 'amount': goal_army_researched[i]['amount']-(current_army[goal_army_researched[i]['unit']] if (goal_army_researched[i]['unit'] in list(current_army)) else 0 )} for i in range(n)]
+    return left_needed_army_researched
+
+
 # returns a tuple containing :
 # - a list of dict containing the series of orders possible to send in the city
 # that uses the most free pop and according to the city goal army :
@@ -323,12 +339,10 @@ def get_naval_units_list():
 # - the pop used by these orders
 def get_current_city_next_recruiting_order():
     # only takes those whose research is done
-    goal_army = goal_armies[get_current_city_name()]
-    goal_army_researched = [e for e in goal_army if (get_current_city_researches()[e['unit']])]
+    goal_army_researched = get_current_city_goal_army_researched()
     n = len(goal_army_researched)
     rounding_scopes = []
-    current_army = get_current_city_units()
-    left_needed_army_researched = [{'unit': goal_army_researched[i]['unit'], 'amount': goal_army_researched[i]['amount']-(current_army[goal_army_researched[i]['unit']] if (goal_army_researched[i]['unit'] in list(current_army)) else 0 )} for i in range(n)]
+    left_needed_army_researched = get_current_city_left_needed_army_researched()
     for e in left_needed_army_researched:
         rounding_scope = floor((e['amount']/30))+1
         e['amount']=e['amount']-e['amount']%rounding_scope
@@ -721,6 +735,10 @@ def is_stacked_auto_recruit():
     if (get_current_city_pop() <= MIN_POP_TO_RECRUIT):
         print('Stacked !')
         print("Population libre insuffisante")
+        return True
+    if (get_current_city_left_needed_army_researched() == []):
+        print('Stacked !')
+        print("Armée idéale atteinte ! (à ce niveau d'académie)")
         return True
     print("Pas stacked")
     return False
