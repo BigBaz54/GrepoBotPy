@@ -261,7 +261,7 @@ def get_current_city_researching_queue_length():
     open_academy()
     l = driver.execute_script("document.querySelectorAll('.queued_building_order').length")
     close_all_windows()
-    return l
+    return l if (l!=None) else 0
 
 # returns a list of strings representing the names of the available researches
 def get_current_city_available_researches():
