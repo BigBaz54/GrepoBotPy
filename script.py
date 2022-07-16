@@ -108,7 +108,7 @@ def switch_to_town_by_id(city_id):
 
 def close_all_windows():
     print('Fermeture des fenêtres')
-    driver.execute_script("GPWindowMgr.closeAll()")
+    driver.execute_script("WM.minimizeAllWindows()")
     short_pause()
 
 
@@ -261,8 +261,8 @@ def get_current_city_researching_queue_length():
     open_academy()
     l = driver.execute_script("document.querySelectorAll('.queued_building_order').length")
     close_all_windows()
-    return l
-
+    return l if (l!=None) else 0
+ 
 # returns a list of strings representing the names of the available researches
 def get_current_city_available_researches():
     open_academy()
@@ -660,9 +660,11 @@ def is_stacked_auto_build():
     connect()
     print_with_time_and_color('\n--is_stacked_auto_build--', 'green')
     if (get_current_city_building_queue_length() >= MAX_BUILDING_ORDERS):
+        print("Stacked !")
         print('La file de construction est pleine')
         return True
     if (building_queues[get_current_city_name()] == []):
+        print("Stacked !")
         print('Aucun ordre dans la file de construction')
         return True
     print("Pas stacked")
@@ -673,10 +675,13 @@ def is_stacked_auto_research():
     connect()
     print_with_time_and_color('\n--is_stacked_auto_research--', 'green')
     if (get_current_city_researching_queue_length() >= MAX_RESEARCHING_ORDERS):
+        print("Stacked !")
         print('La file de recherche est pleine')
         return True
-    needed_unlocked_researches = [e for e in get_current_city_unlocked_researches() if e in researches_to_get[get_current_city_name()]]
+    u = get_current_city_unlocked_researches()
+    needed_unlocked_researches = [e for e in u if e in researches_to_get[get_current_city_name()]]
     if (needed_unlocked_researches == []):
+        print("Stacked !")
         print("Toutes les recherches disponibles à ce niveau d'académie ont été faites")
         return True
     print("Pas stacked")
@@ -687,9 +692,11 @@ def is_stacked_auto_recruit():
     connect()
     print_with_time_and_color('\n--is_stacked_auto_recruit--', 'green')
     if (get_current_city_recruiting_queue_length() >= MAX_RECRUITING_ORDERS):
+        print("Stacked !")
         print('La file de formation est pleine')
         return True
     if (get_current_city_pop <= MIN_POP_TO_RECRUIT):
+        print("Stacked !")
         print("Population libre insuffisante")
         return True
     print("Pas stacked")
