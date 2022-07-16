@@ -700,7 +700,12 @@ def is_stacked_auto_research():
         print('La file de recherche est pleine')
         return True
     done = get_current_city_researched_or_researching()
-    needed_unlocked_researches = [e for e in get_current_city_unlocked_researches() if (e in researches_to_get[get_current_city_name()] and e not in done) or (e[:-4] in researches_to_get[get_current_city_name()] and e not in done)]
+    print('1')
+    u = get_current_city_unlocked_researches()
+    r = researches_to_get[get_current_city_name()]
+    print('2')
+    needed_unlocked_researches = [e for e in u if (e in r and e not in done) or (e[:-4] in r and e not in done)]
+    print('3')
     if (needed_unlocked_researches == []):
         print('Stacked !')
         print("Toutes les recherches disponibles à ce niveau d'académie ont été faites")
