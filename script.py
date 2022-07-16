@@ -700,12 +700,9 @@ def is_stacked_auto_research():
         print('La file de recherche est pleine')
         return True
     done = get_current_city_researched_or_researching()
-    print('1')
     u = get_current_city_unlocked_researches()
     r = researches_to_get[get_current_city_name()]
-    print('2')
     needed_unlocked_researches = [e for e in u if (e in r and e not in done) or (e[:-4] in r and e not in done)]
-    print('3')
     if (needed_unlocked_researches == []):
         print('Stacked !')
         print("Toutes les recherches disponibles à ce niveau d'académie ont été faites")
@@ -721,7 +718,7 @@ def is_stacked_auto_recruit():
         print('Stacked !')
         print('La file de formation est pleine')
         return True
-    if (get_current_city_pop <= MIN_POP_TO_RECRUIT):
+    if (get_current_city_pop() <= MIN_POP_TO_RECRUIT):
         print('Stacked !')
         print("Population libre insuffisante")
         return True
