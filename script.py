@@ -194,6 +194,12 @@ def close_daily_reward():
         close_all_windows()
 
 
+def close_front_window():
+    print("Fermeture de la fenêtre")
+    driver.execute_script("WM.closeFrontWindow()")
+    short_pause()
+
+
 
 
 ##################################
@@ -253,21 +259,21 @@ def get_current_city_researches():
 def get_current_city_unlocked_researches():
     open_academy()
     res = driver.execute_script("res = [];document.querySelectorAll('.column.active>.research_box>.research_icon').forEach((e) => {res.push(e.className.split(' ')[2])}); return res")
-    close_all_windows()
+    close_front_window()
     return res
 
 
 def get_current_city_researching_queue_length():
     open_academy()
     l = driver.execute_script("document.querySelectorAll('.queued_building_order').length")
-    close_all_windows()
+    close_front_window()
     return l if (l!=None) else 0
 
 # returns a list of strings representing the names of the available researches
 def get_current_city_available_researches():
     open_academy()
     res = driver.execute_script("res = [];document.querySelectorAll('.column.active>.research_box>.btn_upgrade').forEach((e) => {res.push(e.dataset['research_id'])}); return res")
-    close_all_windows()
+    close_front_window()
     return res
 
 # returns a string of the name of the next research to do, or None if no needed research is available
@@ -505,15 +511,15 @@ def do_auto_farm_towns_all():
 def do_auto_research():
     connect()
     print_with_time_and_color('\n--do_auto_research--', 'blue')
+    next_research = get_current_city_next_research()
     open_academy()
     print('Lancement de la recherche')
-    next_research = get_current_city_next_research()
     if next_research == 'booty':
         next_research = 'booty_bpv'
     query = '.'+next_research+'~.btn_upgrade'
     get_element(query).click()
     short_pause()
-    close_all_windows()
+    close_front_window()
 
 
 
@@ -640,13 +646,14 @@ def is_ready_auto_research():
     connect()
     ready = False
     print_with_time_and_color('\n--is_ready_auto_research--', 'cyan')
+    r = get_current_city_next_research()
     open_academy()
-    if get_current_city_next_research()!=None:
-        print('La recherche ' + get_current_city_next_research() + ' est prête')
+    if r!=None:
+        print('La recherche ' + r + ' est prête')
         ready=True
     else:
         print("Aucune recherche n'est prête")
-    close_all_windows()
+    close_front_window()
     return ready
 
 
