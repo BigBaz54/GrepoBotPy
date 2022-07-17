@@ -15,7 +15,7 @@ from ast import literal_eval
 def action_selector():
     connect()
     close_daily_reward()
-    print_with_time_and_color("------action_selector------", "red")
+    print_with_time_and_color("\n\n----------ACTION_SELECTOR----------", "red")
     if (auto_attack_enabled):
             # print(actions_current_town[i]['name'] + ' est activé !')
             if (is_ready_auto_attack()):
@@ -299,10 +299,22 @@ def get_current_city_next_research():
         if e in r:
             return e
 
-# returns a dictionary with the names of the units in the city as keys and the number of units as the values
+# returns a dictionary with the names of the units of the city as keys and the number of units as the values
 # contains land and naval units
+# includes units that are not in the city
 def get_current_city_units():
-    return driver.execute_script('return ITowns.getCurrentTown().units()')
+    in_town = driver.execute_script('return ITowns.getCurrentTown().units()')
+    out_of_town = driver.execute_script('return ITowns.getCurrentTown().unitsOuter()')
+    total_army = {}
+    for e in list(in_town):
+        total_army[e] = in_town[e]
+    for e in list(out_of_town):
+        if e in list(total_army):
+            total_army[e] = total_army[e] + out_of_town[e]
+        else:
+            total_army[e] = out_of_town[e]
+    return total_army
+
 
 # returns an int representing the length of the recruiting queue (barracks + docks)
 def get_current_city_recruiting_queue_length():
