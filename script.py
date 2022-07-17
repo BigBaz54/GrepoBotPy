@@ -366,6 +366,7 @@ def get_current_city_next_recruiting_order():
     pop = get_current_city_pop()
     favor = get_current_city_favor()
     tested_comp = [0]*n
+    best_tested_comp = [0]*n
     best_pop_cost = 0
     while(tested_comp != [e['amount'] for e in left_needed_army_researched]):
         tested_comp[-1]+=rounding_scopes[-1]
@@ -474,7 +475,7 @@ def do_auto_build():
 def do_auto_recruit():
     connect()
     print_with_time_and_color('\n--do_auto_recruit--', 'blue')
-    for e in get_current_city_next_recruiting_order():
+    for e in get_current_city_next_recruiting_order()[0]:
         unit, amount = e['unit'], e['amount']
         if unit in get_naval_units_list():
             open_docks()
@@ -630,11 +631,13 @@ def is_ready_auto_recruit():
     connect()
     print_with_time_and_color('\n--is_ready_auto_recruit--', 'cyan')
     if (get_current_city_pop() <= MIN_POP_TO_RECRUIT):
-        print('Population libre insuffisante')
+        print('Pas prêt : population libre insuffisante')
         return False
     next_order, next_order_pop = get_current_city_next_recruiting_order()
     if (next_order_pop >= MIN_POP_TO_RECRUIT):
+        print('Prêt !')
         return True
+    print('Pas prêt : pas assez de ressources')
     return False
 
 
