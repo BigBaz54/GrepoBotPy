@@ -3,6 +3,7 @@ from math import floor
 from operator import le
 from random import random
 from time import sleep
+from turtle import left
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -40,7 +41,7 @@ def action_selector():
                     actions_current_town[i]['do_function']()
                     return
                 else:
-                    print(actions_current_town[i]['name']+" n'est pas stacked")
+                    print("\n"+actions_current_town[i]['name']+" n'est pas stacked")
                     switch_town()
                     if(get_current_city_name() == '1. Ville 1'):
                         print('Toutes les villes ont été parcourues')
@@ -356,6 +357,7 @@ def get_current_city_next_recruiting_order():
     n = len(goal_army_researched)
     rounding_scopes = []
     left_needed_army_researched = get_current_city_left_needed_army_researched()
+    left_needed_army_researched = [{'unit': e['unit'], 'amount': max(0, e['amount'])} for e in left_needed_army_researched]
     for e in left_needed_army_researched:
         rounding_scope = floor((e['amount']/30))+1
         e['amount']=e['amount']-e['amount']%rounding_scope

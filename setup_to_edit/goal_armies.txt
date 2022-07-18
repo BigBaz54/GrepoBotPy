@@ -1,5 +1,5 @@
 {
-    "1. Ville 1" : [{'unit': 'slinger', 'amount': 399}, {'unit': 'hoplite', 'amount': 419}],
+    "1. Ville 1" : [{'unit': 'slinger', 'amount': 399}, {'unit': 'hoplite', 'amount': 419}, {'unit': 'rider', 'amount': 100}],
     "2. Ville 2" : [],
     "3. Ville 3" : [],
 }
