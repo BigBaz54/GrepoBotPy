@@ -1,5 +1,6 @@
 {
     "1. Python" : [{'unit': 'slinger', 'amount': 600}, {'unit': 'hoplite', 'amount': 600}, {'unit': 'rider', 'amount': 200}, {'unit': 'colonize_ship', 'amount': 1}],
     "2. OCaml" : [{'unit': 'attack_ship', 'amount': 250}, {'unit': 'big_transporter', 'amount': 1}],
-    "3. HTML" : [],
+    "3. HTML" : [{'unit': 'archer', 'amount': 630}, {'unit': 'chariot', 'amount': 217}],
+    "4. CSS": [{'unit': 'bireme', 'amount': 300}],
 }

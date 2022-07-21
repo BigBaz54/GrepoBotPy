@@ -330,10 +330,12 @@ def get_current_city_id():
 def get_naval_units_list():
     return ['big_transporter', 'bireme', 'attack_ship', 'demolition_ship', 'small_transporter', 'trireme', 'colonize_ship', 'sea_monster', 'siren']
 
+def get_mythic_units_list():
+    return ['sea_monster', 'siren', "minotaur", "manticore", "zyklop", "harpy", "medusa", "centaur", "pegasus", "cerberus", "fury", "griffin", "calydonian_boar", "satyr", "spartoi", "ladon", "godsent"]
 
 def get_current_city_goal_army_researched():
     goal_army = goal_armies[get_current_city_name()]
-    goal_army_researched = [e for e in goal_army if (get_current_city_researches()[e['unit']])]
+    goal_army_researched = [e for e in goal_army if (e['unit'] in ['big_transporter', 'sword']+get_mythic_units_list() or (get_current_city_researches()[e['unit']]) )]
     return goal_army_researched
 
 
@@ -342,6 +344,10 @@ def get_current_city_left_needed_army_researched():
     n = len(goal_army_researched)
     current_army = get_current_city_units()
     left_needed_army_researched = [{'unit': goal_army_researched[i]['unit'], 'amount': goal_army_researched[i]['amount']-(current_army[goal_army_researched[i]['unit']] if (goal_army_researched[i]['unit'] in list(current_army)) else 0 )} for i in range(n)]
+    left_needed_army_researched_final = []
+    for e in left_needed_army_researched:
+        if e['amount']>0:
+            left_needed_army_researched_final.append(e)
     return left_needed_army_researched
 
 
@@ -872,6 +878,11 @@ actions = {
         2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_stacked_function': is_stacked_auto_recruit},
     },
     '3. HTML': {
+        0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_stacked_function': is_stacked_auto_build},
+        1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_stacked_function': is_stacked_auto_research},
+        2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_stacked_function': is_stacked_auto_recruit},
+    },
+    '4. CSS': {
         0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_stacked_function': is_stacked_auto_build},
         1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_stacked_function': is_stacked_auto_research},
         2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_stacked_function': is_stacked_auto_recruit},

@@ -1,5 +1,6 @@
 {
     '1. Python' : ['colonize_ship', 'town_guard', 'booty', 'pottery', 'architecture', 'building_crane', 'rider', 'instructor', 'conscription', 'attack_ship', 'plow', 'small_transporter', 'berth', 'phalanx', 'breach', 'take_over', 'ram', 'cartography'],
     '2. OCaml' : ['phalanx'],
-    '3. HTML' : [],
+    '3. HTML' : ['archer', 'town_guard', 'booty', 'pottery', 'architecture', 'building_crane', 'chariot', 'instructor', 'conscription', 'small_transporter', 'shipwright', 'plow', 'berth', 'mathematics', 'hoplite', 'phalanx', 'ram', 'cartography'],
+    '4. CSS' : ['town_guard', 'booty', 'pottery', 'architecture', 'building_crane', 'bireme', 'shipwright', 'mathematics', 'plow', 'ram', 'cartography', 'phalanx', 'espionage'],
 }

@@ -1,16 +1,16 @@
 current_buildings = {
-    "Senat": 8,
+    "Senat": 24,
     "Grotte": 0,
-    "Scierie": 5,
-    "Carriere": 5,
-    "Mine d'argent": 5,
+    "Scierie": 15,
+    "Carriere": 15,
+    "Mine d'argent": 12,
     "Marche": 3,
-    "Port": 0,
+    "Port": 3,
     "Caserne": 5,
-    "Remparts": 1,
-    "Entrepot": 7,
-    "Ferme": 6,
-    "Academie": 3,
+    "Remparts": 3,
+    "Entrepot": 16,
+    "Ferme": 36,
+    "Academie": 24,
     "Temple": 3,
 }
 
@@ -59,3 +59,9 @@ raccourcis = {
     "tem": "Temple",
     "down": "down"
 }
+
+
+def auto_queue_builder():
+    queue = []
+    buildings = dict.copy(current_buildings)
+    
