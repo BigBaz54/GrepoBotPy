@@ -43,7 +43,7 @@ def action_selector():
                 else:
                     print("\n"+actions_current_town[i]['name']+" n'est pas stacked")
                     switch_town()
-                    if(get_current_city_name() == '1. Ville 1'):
+                    if(get_current_city_name() == '1. Python'):
                         print('Toutes les villes ont été parcourues')
                         do_auto_festival()
                         do_auto_triumph()
@@ -51,7 +51,7 @@ def action_selector():
                     return
     print_with_time_and_color("\nCette ville est full stacked !!", 'red')
     switch_town()
-    if(get_current_city_name() == '1. Ville 1'):
+    if(get_current_city_name() == '1. Python'):
         print('Toutes les villes ont été parcourues')
         do_auto_festival()
         do_auto_triumph()
@@ -89,7 +89,7 @@ def connect():
         print_with_time_and_color('\nJe suis connecté !', 'green')
         long_pause()
     if driver.current_url in ['https://fr0.grepolis.com/start?nosession']:
-        sleep(10)
+        sleep(60)
         driver.find_elements(By.CSS_SELECTOR, 'li.world_name')[0].click()
         print_with_time_and_color('\nJe suis connecté !', 'green')
         long_pause()
@@ -560,6 +560,9 @@ def do_auto_research():
     print('Lancement de la recherche')
     if next_research == 'booty':
         next_research = 'booty_bpv'
+    # monde siège !!!!
+    if next_research == 'take_over':
+        next_research = 'take_over_old'
     query = '.'+next_research+'~.btn_upgrade'
     get_element(query).click()
     short_pause()
@@ -858,17 +861,17 @@ auto_research_enabled = True
 
 # swap the digits to change the priority order
 actions = {
-    '1. Ville 1': {
+    '1. Python': {
         0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_stacked_function': is_stacked_auto_build},
         1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_stacked_function': is_stacked_auto_research},
         2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_stacked_function': is_stacked_auto_recruit},
     },
-    '2. Ville 2': {
+    '2. OCaml': {
         0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_stacked_function': is_stacked_auto_build},
         1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_stacked_function': is_stacked_auto_research},
         2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_stacked_function': is_stacked_auto_recruit},
     },
-    '3. Ville 3': {
+    '3. HTML': {
         0: {'name': 'building_upgrade', 'activated': auto_build_enabled, 'do_function': do_auto_build, 'is_ready_function': is_ready_auto_build, 'is_stacked_function': is_stacked_auto_build},
         1: {'name': 'research', 'activated': auto_research_enabled, 'do_function': do_auto_research, 'is_ready_function': is_ready_auto_research, 'is_stacked_function': is_stacked_auto_research},
         2: {'name': 'unit_order', 'activated': auto_recruit_enabled, 'do_function': do_auto_recruit, 'is_ready_function': is_ready_auto_recruit, 'is_stacked_function': is_stacked_auto_recruit},
