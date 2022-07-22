@@ -365,7 +365,7 @@ def get_current_city_next_recruiting_order():
     left_needed_army_researched = get_current_city_left_needed_army_researched()
     left_needed_army_researched = [{'unit': e['unit'], 'amount': max(0, e['amount'])} for e in left_needed_army_researched]
     for e in left_needed_army_researched:
-        rounding_scope = floor((e['amount']/30))+1
+        rounding_scope = floor((e['amount']/100))+1
         e['amount']=e['amount']-e['amount']%rounding_scope
         rounding_scopes.append(rounding_scope)
     wood = get_current_city_wood()
@@ -376,7 +376,8 @@ def get_current_city_next_recruiting_order():
     tested_comp = [0]*n
     best_tested_comp = [0]*n
     best_pop_cost = 0
-    while(tested_comp != [e['amount'] for e in left_needed_army_researched]):
+    while(tested_comp != [e['amount'] for e in left_needed_army_researched]): # atteint car on arrondit ligne 10
+        # print(tested_comp)
         tested_comp[-1]+=rounding_scopes[-1]
         for i in range(n-1, -1, -1):
             if tested_comp[i] > left_needed_army_researched[i]['amount']:
@@ -405,7 +406,7 @@ def get_current_city_next_recruiting_order():
         else: 
             for i in range(1, n+1):
                 if tested_comp[i:] == [0]*(n-i):
-                    for j in range(i,n):
+                    for j in range(i-1,n):
                         tested_comp[j]=left_needed_army_researched[j]['amount']
     next_order = [{'unit': goal_army_researched[i]['unit'], 'amount': best_tested_comp[i]} for i in range(n) if best_tested_comp[i]!=0]
     return next_order, best_pop_cost
@@ -893,7 +894,7 @@ actions = {
 # constants
 TIME_BETWEEN_ACTIONS = 2
 TIME_TO_PREPARE_ATTACK = 180
-BATTLE_POINTS_TO_SPARE = 1000
+BATTLE_POINTS_TO_SPARE = 1500
 MAX_BUILDING_ORDERS = 3
 MAX_RESEARCHING_ORDERS = 2
 MAX_RECRUITING_ORDERS = 6
