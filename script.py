@@ -316,6 +316,41 @@ def get_current_city_units():
             total_army[e] = out_of_town[e]
     return total_army
 
+# returns a dictionary with the names of the units of the city as keys and the number of units as the values
+# contains land and naval units
+def get_current_city_recruiting_units():
+    units = {}
+    open_barracks()
+    queue = driver.execute_script("res = []; orders = document.querySelectorAll('.various_orders_content>.ui_various_orders>.queued_building_order>.construction_queue_sprite.frame>.item_icon');orders.forEach((e)=>(res.push({'unit': e.getAttribute('class').split(' ')[2], 'amount':parseInt(e.childNodes[1].textContent) }))) ; return res")
+    for e in queue:
+        if e['unit'] in list(units):
+            units[e['unit']]+=e['amount']
+        else:
+            units[e['unit']]=e['amount']
+    open_docks()
+    queue = driver.execute_script("res = []; orders = document.querySelectorAll('.various_orders_content>.ui_various_orders>.queued_building_order>.construction_queue_sprite.frame>.item_icon');orders.forEach((e)=>(res.push({'unit': e.getAttribute('class').split(' ')[2], 'amount':parseInt(e.childNodes[1].textContent) }))) ; return res")
+    for e in queue:
+        if e['unit'] in list(units):
+            units[e['unit']]+=e['amount']
+        else:
+            units[e['unit']]=e['amount']
+    close_all_windows()
+    return units
+
+# returns a dictionary with the names of the units of the city as keys and the number of units as the values
+# contains land and naval units
+# includes units that are in the city, that are not in the city and that are being recruited
+def get_current_city_recruited_and_recruiting_units():
+    recruiting = get_current_city_recruiting_units()
+    recruited = get_current_city_units()
+    total = dict.copy(recruited)
+    for e in list(recruiting):
+        if e in list(total):
+            total[e]+=recruiting[e]
+        else:
+            total[e]=recruiting[e]
+    return total
+
 
 # returns an int representing the length of the recruiting queue (barracks + docks)
 def get_current_city_recruiting_queue_length():
