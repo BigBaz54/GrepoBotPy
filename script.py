@@ -282,7 +282,7 @@ def get_current_city_unlocked_researches():
 
 def get_current_city_researching_queue_length():
     open_academy()
-    l = driver.execute_script("document.querySelectorAll('.queued_building_order').length")
+    l = driver.execute_script("return document.querySelectorAll('.type_research_queue>.queued_building_order').length")
     close_front_window()
     return l if (l!=None) else 0
 
@@ -785,11 +785,11 @@ def sleep_time_randomizer(seconds, fluctuate):
 
 
 def short_pause():
-    sleep(sleep_time_randomizer(2, 1))
+    sleep(sleep_time_randomizer(1, 1))
 
 
 def long_pause():
-    sleep(sleep_time_randomizer(10, 2))
+    sleep(sleep_time_randomizer(8, 2))
 
 
 def zoom_out():
