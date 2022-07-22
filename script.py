@@ -377,7 +377,7 @@ def get_current_city_goal_army_researched():
 def get_current_city_left_needed_army_researched():
     goal_army_researched = get_current_city_goal_army_researched()
     n = len(goal_army_researched)
-    current_army = get_current_city_units()
+    current_army = get_current_city_recruited_and_recruiting_units()
     left_needed_army_researched = [{'unit': goal_army_researched[i]['unit'], 'amount': goal_army_researched[i]['amount']-(current_army[goal_army_researched[i]['unit']] if (goal_army_researched[i]['unit'] in list(current_army)) else 0 )} for i in range(n)]
     left_needed_army_researched_final = []
     for e in left_needed_army_researched:
@@ -412,7 +412,7 @@ def get_current_city_next_recruiting_order():
     best_tested_comp = [0]*n
     best_pop_cost = 0
     while(tested_comp != [e['amount'] for e in left_needed_army_researched]): # atteint car on arrondit ligne 10
-        # print(tested_comp)
+        print(tested_comp)
         tested_comp[-1]+=rounding_scopes[-1]
         for i in range(n-1, -1, -1):
             if tested_comp[i] > left_needed_army_researched[i]['amount']:
