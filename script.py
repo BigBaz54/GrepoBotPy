@@ -412,7 +412,6 @@ def get_current_city_next_recruiting_order():
     best_tested_comp = [0]*n
     best_pop_cost = 0
     while(tested_comp != [e['amount'] for e in left_needed_army_researched]): # atteint car on arrondit ligne 10
-        print(tested_comp)
         tested_comp[-1]+=rounding_scopes[-1]
         for i in range(n-1, -1, -1):
             if tested_comp[i] > left_needed_army_researched[i]['amount']:
@@ -447,6 +446,10 @@ def get_current_city_next_recruiting_order():
     return next_order, best_pop_cost
 
 
+def get_planner_attacks():
+    return driver.find_elements(By.CSS_SELECTOR, '.attacks_list>li')
+
+
 
 
 ##################################
@@ -459,19 +462,20 @@ def do_auto_attack():
     print('Sauvegarde de la ville courante')
     city_id = get_current_city_id()
     open_attack_planer()
-    print('Affichage du plan courant')
-    get_element('td.ap_name>a').click()
-    short_pause()
-    print('Tri des attaques par départ croissant')
-    get_element('.send_at').click()
-    short_pause()
-    row = get_element('ul.attacks_list>li>.row3').get_attribute('innerText')
-    t = row[-8:]
-    h = int(t[:2])
-    m = int(t[3:5])
-    s = int(t[6:8])
+    print("Affichage de l'onglet Attaques")
+    get_element('#attack_planer-attacks').click()
+    sleep(0.5)
+    for e in get_planner_attacks():
+        row = e.find_element(By.CSS_SELECTOR, ".row3").get_attribute('innerText')
+        texte_jour = row.split(': ')[1][:6]
+        h = int(row.split(':')[1][-2:])
+        m = int(row.split(':')[2])
+        s = int(row.split(':')[3][:2])
+        if (texte_jour == "aujour") and ((h*3600+m*60+s)-(int(datetime.now().strftime('%H'))*3600+int(datetime.now().strftime('%M'))*60+int(datetime.now().strftime('%S')))<=TIME_TO_PREPARE_ATTACK and (h*3600+m*60+s)-(int(datetime.now().strftime('%H'))*3600+int(datetime.now().strftime('%M'))*60+int(datetime.now().strftime('%S')))>0) or ((texte_jour=='demain') and ((((24*3600)-(int(datetime.now().strftime('%H'))*3600+int(datetime.now().strftime('%M'))*60+int(datetime.now().strftime('%S'))))+(h*3600+m*60+s))<=TIME_TO_PREPARE_ATTACK)):
+            next_attack_element = e
+            break 
     print('Préparation de la prochaine attaque')
-    get_element('ul.attacks_list>li>.attack_icon').click()
+    next_attack_element.find_element(By.CSS_SELECTOR, '.attack_icon').click()
     short_pause()
     atk_btn = get_element('#btn_attack_town')
     while int(datetime.now().strftime('%H'))!= h:
@@ -482,23 +486,13 @@ def do_auto_attack():
         sleep(0.001)
     atk_btn.click()
     print_with_time_and_color('Attaque lancée !')
-    short_pause()
+    sleep(0.5)
     close_all_windows()
+    # permet d'enchaîner les attaques plus rapidement
+    if is_ready_auto_attack():
+        do_auto_attack()
     print("Retour sur la ville courante")
     switch_to_town_by_id(city_id)
-    short_pause()
-    open_attack_planer()
-    print('Affichage du plan courant')
-    get_element('td.ap_name>a').click()
-    short_pause()
-    print('Tri des attaques par départ croissant')
-    get_element('.send_at').click()
-    short_pause()
-    print("Sélection de l'attaque lancée")
-    get_element('.attacks_list>li').click()
-    short_pause()
-    print("Suppression de l'attaque")
-    get_element('.btn_remove_attack').click()
     short_pause()
     close_all_windows()
 
@@ -629,23 +623,21 @@ def is_ready_auto_attack():
     if nb_atk == 0:
         print('Aucune attaque planifiée')
     else:
-        print('Affichage du plan courant')
-        get_element('td.ap_name>a').click()
-        short_pause()
-        print('Tri des attaques par départ croissant')
-        get_element('.send_at').click()
-        short_pause()
-        row = get_element('ul.attacks_list>li>.row3').get_attribute('innerText')
-        t = row[-8:]
-        texte_jour = row[9:15]
-        h = int(t[:2])
-        m = int(t[3:5])
-        s = int(t[6:8])
-        if (texte_jour == "aujour") and ((h*3600+m*60+s)-(int(datetime.now().strftime('%H'))*3600+int(datetime.now().strftime('%M'))*60+int(datetime.now().strftime('%S')))<=TIME_TO_PREPARE_ATTACK) or ((texte_jour=='demain') and ((((24*3600)-(int(datetime.now().strftime('%H'))*3600+int(datetime.now().strftime('%M'))*60+int(datetime.now().strftime('%S'))))+(h*3600+m*60+s))<=TIME_TO_PREPARE_ATTACK)):
-            ready = True
-            print('Attaque imminente !')
-        else:
-            print('Aucune attaque imminente')
+        print("Affichage de l'onglet Attaques")
+        get_element('#attack_planer-attacks').click()
+        sleep(0.5)
+        for e in get_planner_attacks():
+            row = e.find_element(By.CSS_SELECTOR, ".row3").get_attribute('innerText')
+            texte_jour = row.split(': ')[1][:6]
+            h = int(row.split(':')[1][-2:])
+            m = int(row.split(':')[2])
+            s = int(row.split(':')[3][:2])
+            if (texte_jour == "aujour") and ((h*3600+m*60+s)-(int(datetime.now().strftime('%H'))*3600+int(datetime.now().strftime('%M'))*60+int(datetime.now().strftime('%S')))<=TIME_TO_PREPARE_ATTACK and (h*3600+m*60+s)-(int(datetime.now().strftime('%H'))*3600+int(datetime.now().strftime('%M'))*60+int(datetime.now().strftime('%S')))>0) or ((texte_jour=='demain') and ((((24*3600)-(int(datetime.now().strftime('%H'))*3600+int(datetime.now().strftime('%M'))*60+int(datetime.now().strftime('%S'))))+(h*3600+m*60+s))<=TIME_TO_PREPARE_ATTACK)):
+                ready = True
+                print('Attaque imminente !')
+                break
+    if ready==False:
+        print('Aucune attaque imminente')
     close_all_windows()
     return ready
 
@@ -823,7 +815,7 @@ def sleep_time_randomizer(seconds, fluctuate):
 
 
 def short_pause():
-    sleep(sleep_time_randomizer(1, 1))
+    sleep(sleep_time_randomizer(0.75, 0.75))
 
 
 def long_pause():
